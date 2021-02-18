@@ -34,9 +34,9 @@ class EventView(mixins.CreateModelMixin,
             end_date = datetime.fromisoformat(end_date)
             queryset = queryset.filter(timestamp__lte=end_date)
 
-        session = self.request.query_params.get('session')
-        if session:
-            queryset = queryset.filter(session=session)
+        session_id = self.request.query_params.get('session_id')
+        if session_id:
+            queryset = queryset.filter(session_id=session_id)
 
         category = self.request.query_params.get('category')
         if category:
