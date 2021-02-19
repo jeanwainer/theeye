@@ -48,7 +48,7 @@ class EventTest(APITestCase):
     def test_post_sample_data(self):
         for sample in self.sample_bodies:
             response = self.client.post('/theeye/events/', sample, format='json')
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.status_code, 202)
 
     def test_list_endpoint(self):
         response = self.client.get('/theeye/events/')

@@ -15,7 +15,6 @@ class EventView(mixins.ListModelMixin,
 
     def create(self, request, *args, **kwargs):
         process_event.delay(request.data)
-        # Celery task will be called from here
         return Response(status=status.HTTP_202_ACCEPTED)
 
     def get_queryset(self):
