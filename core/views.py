@@ -1,17 +1,22 @@
 from datetime import datetime
 from rest_framework import viewsets, mixins
+from rest_framework import status
+from rest_framework.response import Response
+
 from .models import Event
 from .serializers import EventSerializer
+from .tasks import process_event
 
 
-class EventView(mixins.CreateModelMixin,
-                   mixins.ListModelMixin,
+class EventView(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
-    """
-    Initial basic code
-    """
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        process_event.delay(request.data)
+        # Celery task will be called from here
+        return Response(status=status.HTTP_202_ACCEPTED)
 
     def get_queryset(self):
         """

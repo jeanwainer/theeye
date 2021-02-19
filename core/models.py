@@ -7,7 +7,12 @@ class Event(models.Model):
     name = models.CharField(max_length=30)
     data = models.JSONField()
     timestamp = models.DateTimeField()
-    saved_date = models.DateTimeField(auto_created=True)
+    saved_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-timestamp']
+
+
+class ErrorLog(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    payload = models.TextField()
