@@ -3,8 +3,8 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Event
-from .serializers import EventSerializer
+from .models import Event, ErrorLog
+from .serializers import EventSerializer, ErrorLogSerializer
 from .tasks import process_event
 
 
@@ -47,3 +47,8 @@ class EventView(mixins.ListModelMixin,
             queryset = queryset.filter(category=category)
 
         return queryset
+
+
+class ErrorLogView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ErrorLogSerializer
+    queryset = ErrorLog.objects.all()

@@ -2,11 +2,11 @@ from django.db import models
 
 
 class Event(models.Model):
-    session_id = models.CharField(max_length=36, db_index=True)
-    category = models.CharField(max_length=30, db_index=True)
+    session_id = models.CharField(max_length=36)
+    category = models.CharField(max_length=30)
     name = models.CharField(max_length=30)
     data = models.JSONField()
-    timestamp = models.DateTimeField(db_index=True)
+    timestamp = models.DateTimeField()
     saved_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -16,3 +16,8 @@ class Event(models.Model):
 class ErrorLog(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     payload = models.TextField()
+    error = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.created.isoformat()
+

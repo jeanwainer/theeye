@@ -12,5 +12,9 @@ def process_event(data):
     if serializer.is_valid():
         serializer.save()
     else:
-        ErrorLog.objects.create(payload=json.dumps(data))
+        errors = []
+        for k,v in serializer.errors.items():
+            errors.append(f'{k}: {",".join(v)}')
+
+        ErrorLog.objects.create(payload=json.dumps(data), error=','.join(errors))
 
