@@ -5,7 +5,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Events API",
+      title="The Eye API",
       default_version='v1',
       description="Consumer Affairs techincal test API",
       contact=openapi.Contact(email="wainer@gmail.com"),
