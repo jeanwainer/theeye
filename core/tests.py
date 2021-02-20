@@ -1,7 +1,8 @@
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta, timezone
 from rest_framework.test import APIClient, APITestCase
 
 from .models import Event
+from .tasks import process_event
 
 
 # Create your tests here.
@@ -103,3 +104,25 @@ class EventListTest(APITestCase):
         response = self.client.get('/theeye/events/')
         self.assertEqual(len(response.data), 3)
 
+
+class TaskTest(APITestCase):
+
+    def setUp(self):
+        self.data = {
+            "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+            "category": "form interaction",
+            "name": "submit",
+            "data": {
+                "host": "www.consumeraffairs.com",
+                "path": "/",
+                "form": {
+                    "first_name": "John",
+                    "last_name": "Doe"
+                }
+            },
+            "timestamp": "2021-01-01 09:15:27.243860"
+        }
+
+    def test_task_insert(self):
+        task = process_event(self.data)
+        self.assertEqual(Event.objects.count(), 1)
