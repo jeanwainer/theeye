@@ -3,7 +3,8 @@
 This is the test submission for a job application (original briefing in the bottom of this document).
 It's written in python, using django, django rest framework, postgresql and celery with rabbitmq.
 
-The application provides two endpoints: one for receiving (and listing) events, and one for listing errors (incoming requests that didnt validate). 
+The application provides two endpoints: one for receiving (and listing) events, and one for listing errors (incoming
+requests that didn't validate). 
 
 ## How to run
 
@@ -49,7 +50,49 @@ Also the **root url** will show a swagger application to use as a reusable clien
 
 ##Discussions
 
+Provided the entities constraints, I realized that only one model (table) was needed to accomodate the data, with a
+structure similar to the json request. There was no reason to create multiple tables - in fact that would only
+compromise performance.
+Since the payload of data varies, and the many options were not provided, I assumed by the event examples that it's
+always a json object. Thus I used a JSONField for storing this data. While it seemed that keys such as "host" and "path"
+are always present, I decided not to validate against that to keep it as flexible as possible. The only validations are
+against:
+a) Empty payload
+b) Non-JSON object (such as a string)
 
+Given the *constraints*, I understand that it was important to reply as fast as possible (*not leave them hanging*),
+while at the same time delaying its processing, due to the high demand nature of this application.
+
+For this, I used celery for queueing tasks with RabbitMQ as a broker. As soon as the request is received **and**
+authenticated, it's queued for processing while a status code of **202 Accepted** returns to the client.
+Processing is then done, and if it does not validate, it's entire content is saved on another table for error monitoring
+(as in *use cases*).
+
+Two API endpoints were implemented: one for inserting and listing event data, and one for listing failed requests (error
+monitoring). Since session_id, category and time range needed to be queried, they may be through incremental query
+parameters.
+
+
+### DB and Performance
+I understand that performance is a critical issue, and while the given constraints have been addressed,
+there is always room for improvements. For one, it would be interesting to aggregate multiple data into a single insert
+query, using `bulk_insert()`.
+####Indexes
+At first, I thought of creating db indexes for the searchable fields (session_id, timestamp and category).
+But then I understand that this could affect INSERT performance which should be the bottleneck of this application,
+so I removed those indexed.
+
+###Validations:
+The document reads:
+> Different types of Events can have different validations for their payloads
+
+And then:
+
+> Your team should be able to monitor errors that happen in "The Eye", for example:
+> An event that is sending an unexpected value in the payload
+
+Since the validations for each type of Event have not been defined, judging by the examples given I assume that an
+"unexpected value" is something that does not fit the examples, such as any value that is not a valid dictionary. 
 
 
 
