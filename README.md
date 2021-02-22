@@ -1,3 +1,61 @@
+# The Eye (submission)
+
+This is the test submission for a job application (original briefing in the bottom of this document).
+It's written in python, using django, django rest framework, postgresql and celery with rabbitmq.
+
+The application provides two endpoints: one for receiving (and listing) events, and one for listing errors (incoming requests that didnt validate). 
+
+## How to run
+
+### Using docker
+
+Make sure you have docker and docker-compose installed.
+```bash
+$ git clone https://github.com/jeanwainer/theeye.git
+$ sudo docker-compose up --build -d
+```
+
+The server will run at port 8002: http://localhost:8002 (check out urls and endpoints below)
+
+### Running locally (without docker)
+
+Make sure you are under a virtual environment and postgresql is installed.
+
+```bash
+$ git clone https://github.com/jeanwainer/theeye.git
+$ cp .env-sample .env
+#Please edit .env files with your postgresql credentials and rabbitmq is running
+$ pip install -r requirements.txt
+```
+
+Run rabbitmq and start celery worker:
+```bash
+# Start rabbitmq from docker container
+$ sudo docker run -d -p 5672:5672 rabbitmq:alpine
+$ celery -A theeye worker --loglevel=INFO
+```
+Run django's development server
+```bash
+$ ./manage.py runserver
+```
+## Endpoints
+There are two endpoints:
+
+- **/theeye/events**: Endpoint for creating (POST) and listing (GET) events.
+- **/theeye/errors**: Endpoint for listing requests that did not validate (wrong date, payload)
+
+Also the **root url** will show a swagger application to use as a reusable client.
+
+
+##Discussions
+
+
+
+
+
+
+---------------------------------------------------
+
 # The Eye
 
 ## Story

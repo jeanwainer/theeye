@@ -102,7 +102,7 @@ class EventListTest(APITestCase):
 
     def test_inserted_data(self):
         response = self.client.get('/theeye/events/')
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data['count'], 3)
 
 
 class TaskTest(APITestCase):
